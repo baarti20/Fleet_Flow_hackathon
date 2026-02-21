@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleet Flow - Modular Fleet & Logistics Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Auth Screen: Login & Registration -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1 class="auth-logo">Fleet Flow</h1>
+        <p class="auth-tagline">Modular Fleet & Logistics Management</p>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="auth-form active">
+        <h2>Sign In</h2>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required placeholder="you@company.com">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label for="login-role">Role</label>
+            <select id="login-role">
+              <option value="manager">Fleet Manager</option>
+              <option value="dispatcher">Dispatcher</option>
+              <option value="safety">Safety Officer</option>
+              <option value="finance">Financial Analyst</option>
+            </select>
+          </div>
+          <a href="#" class="forgot-link" onclick="event.preventDefault(); alert('Contact your administrator to reset your password.');">Forgot Password?</a>
+          <button type="submit" class="btn-submit">Sign In</button>
+        </form>
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="showRegister(event)">Register</a></p>
+      </div>
+
+      <!-- Registration Form -->
+      <div id="register-form" class="auth-form">
+        <h2>Create Account</h2>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" required placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email</label>
+            <input type="email" id="reg-email" required placeholder="you@company.com">
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" required placeholder="Min. 8 characters">
+          </div>
+          <div class="form-group">
+            <label for="reg-confirm">Confirm Password</label>
+            <input type="password" id="reg-confirm" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label for="reg-role">Role</label>
+            <select id="reg-role">
+              <option value="manager">Fleet Manager</option>
+              <option value="dispatcher">Dispatcher</option>
+              <option value="safety">Safety Officer</option>
+              <option value="finance">Financial Analyst</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin(event)">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-wrapper" class="app hidden">
+    <!-- Sidebar Menu -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="menu-label">Menu</span>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">◉</span> Dashboard
+        </a>
+        <a href="#" class="nav-item" data-page="vehicles">
+          <span class="nav-icon">◉</span> Vehicle Registry
+        </a>
+        <a href="#" class="nav-item" data-page="trips">
+          <span class="nav-icon">◉</span> Trip Dispatcher
+        </a>
+        <a href="#" class="nav-item" data-page="maintenance">
+          <span class="nav-icon">◉</span> Maintenance
+        </a>
+        <a href="#" class="nav-item" data-page="expenses">
+          <span class="nav-icon">◉</span> Trip & Expense
+        </a>
+        <a href="#" class="nav-item" data-page="performance">
+          <span class="nav-icon">◉</span> Performance
+        </a>
+        <a href="#" class="nav-item" data-page="analytics">
+          <span class="nav-icon">◉</span> Analytics
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="page-header">
+        <h1 class="app-title">Fleet Flow</h1>
+        <div class="header-controls">
+          <input type="text" class="search-bar" placeholder="Search bar ...">
+          <span class="user-badge" id="user-info"></span>
+          <button type="button" class="btn-logout" onclick="handleLogout()">Logout</button>
+          <div class="filter-buttons">
+            <button class="btn-outline">Group by</button>
+            <button class="btn-outline">Filter</button>
+            <button class="btn-outline">Sort by...</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page: Dashboard -->
+      <section id="page-dashboard" class="page active">
+        <div class="page-title">Command Center (Main Dashboard)</div>
+        <div class="action-buttons">
+          <button class="btn-primary">New Trip</button>
+          <button class="btn-primary">New Vehicle</button>
+        </div>
+        <div class="kpi-cards">
+          <div class="kpi-card">
+            <span class="kpi-label">Active Fleet</span>
+            <span class="kpi-value">220</span>
+          </div>
+          <div class="kpi-card kpi-alert">
+            <span class="kpi-label">Maintenance Alert <span class="badge">!</span></span>
+            <span class="kpi-value">180</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Pending Cargo</span>
+            <span class="kpi-value">20</span>
+          </div>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trip</th>
+                <th>Vehicle</th>
+                <th>Driver</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Trailer Truck</td>
+                <td>John Doe</td>
+                <td><span class="status-pill status-active">On Trip</span></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Van-05</td>
+                <td>Alex Smith</td>
+                <td><span class="status-pill status-completed">Completed</span></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Mini Truck</td>
+                <td>Sarah Lee</td>
+                <td><span class="status-pill status-draft">Draft</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Page: Vehicle Registry -->
+      <section id="page-vehicles" class="page">
+        <div class="page-title">3. Vehicle Registry (Asset Management)</div>
+        <div class="action-buttons">
+          <button class="btn-primary" onclick="openModal('vehicle-modal')">+ New Vehicle</button>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>NO</th>
+                <th>Plate</th>
+                <th>Model</th>
+                <th>Type</th>
+                <th>Capacity</th>
+                <th>Odometer</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>MH 00</td>
+                <td>2017</td>
+                <td>Mini</td>
+                <td>5 ton</td>
+                <td>79,000</td>
+                <td><span class="status-pill status-idle">Idle</span></td>
+                <td><button class="btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>MH 01</td>
+                <td>2019</td>
+                <td>Van</td>
+                <td>500 kg</td>
+                <td>42,000</td>
+                <td><span class="status-pill status-active">Available</span></td>
+                <td><button class="btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-panel">
+          <h3>What it's for</h3>
+          <p>This is your digital garage. Add, view, change, or remove every vehicle your company owns.</p>
+          <h4>The Details You Track</h4>
+          <ul>
+            <li><strong>Name/Model:</strong> The specific name/make of the vehicle.</li>
+            <li><strong>License Plate:</strong> The unique ID for each vehicle.</li>
+            <li><strong>Max Load Capacity:</strong> Weight the vehicle can safely carry (kg or tons).</li>
+            <li><strong>Odometer:</strong> Current mileage on the dashboard.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Page: Trip Dispatcher -->
+      <section id="page-trips" class="page">
+        <div class="page-title">4. Trip Dispatcher & Management</div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trip Fleet Type</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1 - Trailer Truck</td>
+                <td>Mumbai</td>
+                <td>Delhi</td>
+                <td><span class="status-pill status-active">Dispatched</span></td>
+              </tr>
+              <tr>
+                <td>2 - Van</td>
+                <td>Pune</td>
+                <td>Bangalore</td>
+                <td><span class="status-pill status-completed">Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="form-panel form-highlight">
+          <h3>New Trip Form</h3>
+          <form class="trip-form">
+            <div class="form-row">
+              <label>Select Vehicle:</label>
+              <select><option>-- Select --</option><option>Van-05</option><option>MH 00</option></select>
+            </div>
+            <div class="form-row">
+              <label>Cargo Weight (Kg):</label>
+              <input type="number" placeholder="e.g. 450">
+            </div>
+            <div class="form-row">
+              <label>Select Driver:</label>
+              <select><option>-- Select --</option><option>Alex</option><option>John Doe</option></select>
+            </div>
+            <div class="form-row">
+              <label>Origin Address:</label>
+              <input type="text" placeholder="Enter origin">
+            </div>
+            <div class="form-row">
+              <label>Destination:</label>
+              <input type="text" placeholder="Enter destination">
+            </div>
+            <div class="form-row">
+              <label>Estimated Fuel Cost:</label>
+              <input type="number" placeholder="Rs.">
+            </div>
+            <button type="button" class="btn-confirm">Confirm & Dispatch Trip</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Page: Maintenance -->
+      <section id="page-maintenance" class="page">
+        <div class="page-title">5. Maintenance & Service Logs</div>
+        <div class="action-buttons">
+          <button class="btn-primary" onclick="openModal('service-modal')">Create New Service</button>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Vehicle</th>
+                <th>Issue/Service</th>
+                <th>Date</th>
+                <th>Cost</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>321</td>
+                <td>TATA</td>
+                <td>Engine Issue</td>
+                <td>20/02</td>
+                <td>10k</td>
+                <td><span class="status-pill status-new">New</span></td>
+              </tr>
+              <tr>
+                <td>322</td>
+                <td>Van-05</td>
+                <td>Oil Change</td>
+                <td>18/02</td>
+                <td>3k</td>
+                <td><span class="status-pill status-completed">Done</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-panel">
+          <h3>What</h3>
+          <p>Keep your vehicles healthy. Tracks every check-up and repair.</p>
+          <h4>The "Auto-Hide" Rule</h4>
+          <p>When you add a vehicle to a maintenance log, it's automatically marked "In Shop" and hidden from the Trip Dispatcher until service is complete.</p>
+        </div>
+      </section>
+
+      <!-- Page: Expenses -->
+      <section id="page-expenses" class="page">
+        <div class="page-title">6. Expense & Fuel Logging</div>
+        <div class="action-buttons">
+          <button class="btn-primary" onclick="openModal('expense-modal')">Add an Expense</button>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Trip ID</th>
+                <th>Driver</th>
+                <th>Distance</th>
+                <th>Fuel Expense</th>
+                <th>Misc. Expense</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>321</td>
+                <td>John</td>
+                <td>1000 km</td>
+                <td>19k</td>
+                <td>3k</td>
+                <td><span class="status-pill status-completed">Done</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-panel">
+          <h3>What it's for</h3>
+          <p>Your digital wallet for fleets—tracks money spent on vehicles.</p>
+          <h4>How it works</h4>
+          <ul>
+            <li><strong>Fuel Tracking:</strong> Record liters and cost per trip.</li>
+            <li><strong>Cost per Vehicle:</strong> Automatically links to the vehicle used.</li>
+            <li><strong>The Math:</strong> Total Cost = Fuel + Repairs per vehicle.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Page: Driver Performance -->
+      <section id="page-performance" class="page">
+        <div class="page-title">7. Driver Performance & Safety Profiles</div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>License #</th>
+                <th>Expiry</th>
+                <th>Completion Rate</th>
+                <th>Safety Score</th>
+                <th>Complaints</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John</td>
+                <td>23223</td>
+                <td>22/36</td>
+                <td>92%</td>
+                <td>89%</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>Alex</td>
+                <td>44556</td>
+                <td>25/27</td>
+                <td>95%</td>
+                <td>94%</td>
+                <td>1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-panel highlight-panel">
+          <h3>What it's for</h3>
+          <p>Manage the people driving your vehicles. Ensure they're legal to drive and performing well.</p>
+          <h4>How it Works</h4>
+          <ul>
+            <li><strong>Paperwork Check:</strong> License number & expiry tracking.</li>
+            <li><strong>Safety Lock:</strong> Expired licenses block new assignments until renewal.</li>
+            <li><strong>Performance Scores:</strong> Safety score based on on-time completion, accidents.</li>
+            <li><strong>Duty Status:</strong> On Duty, Taking a Break, or Suspended.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Page: Analytics -->
+      <section id="page-analytics" class="page">
+        <div class="page-title">8. Operational Analytics & Financial Reports</div>
+        <div class="kpi-cards">
+          <div class="kpi-card">
+            <span class="kpi-label">Total Fuel Cost</span>
+            <span class="kpi-value">Rs. 2.6 L</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Fleet ROI</span>
+            <span class="kpi-value accent">+12.5%</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Utilization Rate</span>
+            <span class="kpi-value">82%</span>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-box">
+            <h4>Fuel Efficiency Trend (km/L)</h4>
+            <div class="chart-placeholder">
+              <svg viewBox="0 0 300 150" class="mini-chart">
+                <polyline fill="none" stroke="var(--accent)" stroke-width="2" 
+                  points="0,120 50,100 100,80 150,60 200,70 250,40 300,30"/>
+                <line x1="0" y1="120" x2="300" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-box">
+            <h4>Efficiency Utilization</h4>
+            <div class="chart-placeholder bar-chart">
+              <div class="bar" style="height: 60%"></div>
+              <div class="bar" style="height: 75%"></div>
+              <div class="bar" style="height: 85%"></div>
+              <div class="bar" style="height: 90%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="table-section">
+          <h4 class="section-title">Financial Summary of Month</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Revenue</th>
+                <th>Fuel Cost</th>
+                <th>Maintenance</th>
+                <th>Net Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jan</td>
+                <td>Rs. 17L</td>
+                <td>Rs. 6L</td>
+                <td>Rs. 2L</td>
+                <td>Rs. 9L</td>
+              </tr>
+              <tr>
+                <td>Feb</td>
+                <td>Rs. 19L</td>
+                <td>Rs. 5.5L</td>
+                <td>Rs. 2.2L</td>
+                <td>Rs. 11.3L</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: New Vehicle -->
+  <div id="vehicle-modal" class="modal">
+    <div class="modal-content">
+      <h3>New Vehicle Registration</h3>
+      <form>
+        <div class="form-row"><label>License Plate:</label><input type="text"></div>
+        <div class="form-row"><label>Max Payload:</label><input type="text" placeholder="kg or tons"></div>
+        <div class="form-row"><label>Initial Odometer:</label><input type="number"></div>
+        <div class="form-row"><label>Type:</label><select><option>Mini</option><option>Van</option><option>Trailer Truck</option></select></div>
+        <div class="form-row"><label>Model:</label><input type="text"></div>
+        <div class="form-actions">
+          <button type="button" class="btn-success" onclick="closeModal('vehicle-modal')">Save</button>
+          <button type="button" class="btn-cancel" onclick="closeModal('vehicle-modal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: New Service -->
+  <div id="service-modal" class="modal">
+    <div class="modal-content">
+      <h3>New Service</h3>
+      <form>
+        <div class="form-row"><label>Vehicle Name:</label><input type="text"></div>
+        <div class="form-row"><label>Issue/Service:</label><input type="text"></div>
+        <div class="form-row"><label>Date:</label><input type="date"></div>
+        <div class="form-actions">
+          <button type="button" class="btn-success" onclick="closeModal('service-modal')">Create</button>
+          <button type="button" class="btn-cancel" onclick="closeModal('service-modal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: New Expense -->
+  <div id="expense-modal" class="modal">
+    <div class="modal-content">
+      <h3>New Expense</h3>
+      <form>
+        <div class="form-row"><label>Trip ID:</label><input type="text"></div>
+        <div class="form-row"><label>Driver:</label><input type="text"></div>
+        <div class="form-row"><label>Fuel Cost:</label><input type="number" placeholder="Rs."></div>
+        <div class="form-row"><label>Misc Expense:</label><input type="number" placeholder="Rs."></div>
+        <div class="form-actions">
+          <button type="button" class="btn-success" onclick="closeModal('expense-modal')">Create</button>
+          <button type="button" class="btn-cancel" onclick="closeModal('expense-modal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
